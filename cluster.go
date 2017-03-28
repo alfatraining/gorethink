@@ -392,10 +392,8 @@ func (c *Cluster) connectNode(id string, aliases []Host) (*Node, error) {
 // IsConnected returns true if cluster has nodes and is not already closed.
 func (c *Cluster) IsConnected() bool {
 	c.mu.RLock()
-	closed := c.closed
-	c.mu.RUnlock()
-
-	return (len(c.GetNodes()) > 0) && !closed
+	defer c.mu.RUnlock()
+	return (len(c.nodes) > 0) && !c.closed
 }
 
 // AddSeeds adds new seed hosts to the cluster.
